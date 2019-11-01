@@ -3,7 +3,7 @@
 
 import unittest2
 from os.path import join
-from cmbc.main import getCurrentDirectory
+from cmbc.main import getCurrentDirectory, getPositions
 
 
 
@@ -14,11 +14,11 @@ class TestALL(unittest2.TestCase):
 
 
 
-	def testRawPosition(self):
+	def testGetPositions(self):
 		self.assertEqual(1, 1)
 
 
-		
+
 	# def testRawPosition(self):
 	# 	inputFile = join(getCurrentDirectory(), 'samples', 'Holding _22102019.xlsx')
 	# 	dt, positions = (lambda t: (t[0], list(t[1])))(getPositions(inputFile))
