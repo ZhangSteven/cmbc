@@ -3,15 +3,16 @@
 # Read Nomura holding anc cash reports, convert them to Geneva holding and cash
 # format.
 # 
+# Program structure very similar to main.py from package nomura. Output csv
+# has exactly the same structure.
+# 
 
-from itertools import takewhile, chain
+from itertools import chain
 from functools import partial
-from utils.excel import worksheetToLines
-from utils.utility import fromExcelOrdinal, dictToValues, writeCsv
-from utils.iter import pop
+from utils.utility import dictToValues, writeCsv
 from toolz.functoolz import compose
-from toolz.dicttoolz import assoc
-from nomura.main import fileToLines, getHeadersnLines
+from nomura.main import fileToLines, getHeadersnLines, getCashHeaders \
+						, getHoldingHeaders, getOutputFileName
 from os.path import join, dirname, abspath
 import logging
 logger = logging.getLogger(__name__)
@@ -26,7 +27,8 @@ def addDictValue(key, value, d):
 
 
 stringToFloat = lambda s: \
-	float(s.strip()) if isinstance(s, str) else s
+	float(''.join(filter(lambda x: x != ',', s.strip()))) if isinstance(s, str) \
+	else s
 
 
 
@@ -64,6 +66,11 @@ cashPosition = lambda date, p: \
 
 filenameWithoutPath = lambda filename: \
 	filename.split('\\')[-1]
+
+
+
+isCashFile = lambda filename: \
+	filenameWithoutPath(filename).split('.')[0].endswith('cash_pos')
 
 
 
@@ -118,7 +125,37 @@ getRawPositions = compose(
 """
 getCurrentDirectory = lambda: \
 	dirname(abspath(__file__))
+
+
+
+"""
+	[String] inputFile => [String] file name postfix, [Iterable] rows
+"""
+toOutputData = lambda inputFile: \
+	(lambda date, positions: \
+		( '_cmbc_' + date + '_cash'\
+		, chain( [getCashHeaders()]\
+			   , map( partial(dictToValues, getCashHeaders())\
+			   		, map( partial(cashPosition, date)\
+			   			 , positions)))\
+		) if isCashFile(inputFile) else \
+
+		( '_cmbc_' + date + '_position'\
+		, chain( [getHoldingHeaders()]\
+			   , map( partial(dictToValues, getHoldingHeaders())\
+			   		, map( partial(holdingPosition, date)\
+			   			 , positions)))\
+		)
+	)(*getPositions(inputFile))
 	
+
+
+outputCsv = lambda inputFile, outputDir: \
+	(lambda postfix, outputData: \
+		writeCsv( getOutputFileName(inputFile, postfix, outputDir)\
+				, outputData, delimiter='|')
+	)(*toOutputData(inputFile))
+
 
 
 
@@ -127,7 +164,5 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	inputFile = join(getCurrentDirectory(), 'samples', '20190828_5600xxxxx_cash_pos.xls')
-	date, positions = getPositions(inputFile)
-	print(date)
-	for x in positions:
-		print(x)
+	# inputFile = join(getCurrentDirectory(), 'samples', '20190828_5600xxxxx_sec_pos.xls')
+	print(outputCsv(inputFile, ''))
