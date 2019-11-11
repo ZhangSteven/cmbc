@@ -19,7 +19,7 @@ class TestALL(unittest2.TestCase):
 
 	def testGetPositions(self):
 		inputFile = join( getCurrentDirectory()\
-						, 'samples', '20190828_5600xxxxx_sec_pos.xls')
+						, 'samples', 'sec_pos_08112019.xlsx')
 		date, positions = getPositions(inputFile)
 		positions = list(map(partial(holdingPosition, date), positions))
 		self.assertEqual(1, len(positions))
@@ -29,19 +29,18 @@ class TestALL(unittest2.TestCase):
 
 	def testGetPositions2(self):
 		inputFile = join( getCurrentDirectory()\
-						, 'samples', '20190828_5600xxxxx_cash_pos.xls')
+						, 'samples', 'cash_pos_08112019.xlsx')
 		date, positions = getPositions(inputFile)
 		positions = list(map(partial(cashPosition, date), positions))
-		self.assertEqual(4, len(positions))
-		self.verifyCashPosition(firstOf( lambda p: p['currency'] == 'USD'\
-									   , positions))
+		self.assertEqual(1, len(positions))
+		self.verifyCashPosition(positions[0])
 
 
 
 	def verifyPosition(self, position):
-		self.assertEqual('5600xxxxx', position['portfolio'])
+		self.assertEqual('560010910', position['portfolio'])
 		self.assertEqual('', position['custodian'])
-		self.assertEqual('2019-08-28', position['date'])
+		self.assertEqual('2019-11-08', position['date'])
 		self.assertEqual('', position['geneva_investment_id'])
 		self.assertEqual('XS1990736644', position['ISIN'])
 		self.assertEqual('', position['bloomberg_figi'])
@@ -52,8 +51,8 @@ class TestALL(unittest2.TestCase):
 
 
 	def verifyCashPosition(self, position):
-		self.assertEqual('5600xxxxx', position['portfolio'])
+		self.assertEqual('560010910', position['portfolio'])
 		self.assertEqual('', position['custodian'])
-		self.assertEqual('2019-08-28', position['date'])
-		self.assertEqual('USD', position['currency'])
-		self.assertAlmostEqual(56945.18, position['balance'])
+		self.assertEqual('2019-11-08', position['date'])
+		self.assertEqual('HKD', position['currency'])
+		self.assertAlmostEqual(60000000.00, position['balance'])

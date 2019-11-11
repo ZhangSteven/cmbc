@@ -14,6 +14,7 @@ from toolz.functoolz import compose
 from nomura.main import fileToLines, getHeadersnLines, getCashHeaders \
 						, getHoldingHeaders, getOutputFileName
 from os.path import join, dirname, abspath
+from datetime import datetime
 import logging
 logger = logging.getLogger(__name__)
 
@@ -37,14 +38,14 @@ stringToFloat = lambda s: \
 		[Dictionary] Geneva holding position
 """
 holdingPosition = lambda date, p: \
-	{ 'portfolio': p['Portfolio']\
+	{ 'portfolio': p['portfolio_code']\
 	, 'custodian': ''\
 	, 'date': date\
 	, 'geneva_investment_id': ''\
 	, 'ISIN': p['instrument_code']\
 	, 'bloomberg_figi': ''\
 	, 'name': p['name']\
-	, 'currency': p['instrument_ccy']\
+	, 'currency': p['instrument_CCY']\
 	, 'quantity': stringToFloat(p['quantity'])\
 	}
 
@@ -55,7 +56,7 @@ holdingPosition = lambda date, p: \
 		[Dictionary] Geneva cash position
 """
 cashPosition = lambda date, p: \
-	{ 'portfolio': p['Portfolio']\
+	{ 'portfolio': p['portfolio_code']\
 	, 'custodian': ''\
 	, 'date': date\
 	, 'currency': p['account_ccy_code']\
@@ -70,25 +71,21 @@ filenameWithoutPath = lambda filename: \
 
 
 isCashFile = lambda filename: \
-	filenameWithoutPath(filename).split('.')[0].endswith('cash_pos')
+	filenameWithoutPath(filename).split('.')[0].startswith('cash_pos')
 
 
 
 """
 	[String] filename => [String] date (yyyy-mm-dd)
+
+	The file looks like: sec_pos_08112019.xlsx
+
+	The date in the file name follows "ddmmyyyy" convention.
 """
 dateFromFilename = lambda filename: \
 	(lambda s: \
-		s[0:4] + '-' + s[4:6] + '-' + s[6:8]
-	)(filenameWithoutPath(filename).split('_')[0])
-
-
-
-"""
-	[String] filename => [String] portfolio id
-"""
-portfolioFromFileName = lambda filename: \
-	filenameWithoutPath(filename).split('_')[1]
+		datetime.strptime(s, '%d%m%Y').strftime('%Y-%m-%d')
+	)(filenameWithoutPath(filename).split('.')[0].split('_')[-1])
 
 
 
@@ -96,10 +93,7 @@ portfolioFromFileName = lambda filename: \
 	[String] file => [String] date (yyyy-mm-dd), [Iterable] positions
 """
 getPositions = lambda file: \
-	( dateFromFilename(file)\
-	, map( partial(addDictValue, 'Portfolio', portfolioFromFileName(file))\
-		 , getRawPositions(file))
-	)
+	(dateFromFilename(file), getRawPositions(file))
 
 
 
@@ -163,6 +157,6 @@ if __name__ == '__main__':
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	inputFile = join(getCurrentDirectory(), 'samples', '20190828_5600xxxxx_cash_pos.xls')
-	# inputFile = join(getCurrentDirectory(), 'samples', '20190828_5600xxxxx_sec_pos.xls')
+	# inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_08112019.xlsx')
+	inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
 	print(outputCsv(inputFile, ''))
