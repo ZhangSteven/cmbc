@@ -36,13 +36,19 @@ stringToFloat = lambda s: \
 """
 	[Dictionary] p (raw holding position) => 
 		[Dictionary] Geneva holding position
+
+	Assumptions: 
+
+	(1) There are only two types of holdings, bond or equity.
+	(2) All equity holdings are HK equity.
 """
 holdingPosition = lambda date, p: \
 	{ 'portfolio': p['portfolio_code']\
 	, 'custodian': ''\
 	, 'date': date\
-	, 'geneva_investment_id': ''\
-	, 'ISIN': p['instrument_code']\
+	, 'geneva_investment_id': '' if p['instrument_type'] == 'Bonds' \
+								else p['instrument_code'] + ' HK'
+	, 'ISIN': p['instrument_code'] if p['instrument_type'] == 'Bonds' else ''
 	, 'bloomberg_figi': ''\
 	, 'name': p['name']\
 	, 'currency': p['instrument_CCY']\
