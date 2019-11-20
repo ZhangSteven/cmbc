@@ -164,5 +164,6 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	# inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_08112019.xlsx')
-	inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
+	# inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
+	inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_19112019.xls')
 	print(outputCsv(inputFile, ''))
