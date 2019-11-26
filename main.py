@@ -27,6 +27,9 @@ def addDictValue(key, value, d):
 
 
 
+"""
+	[]
+"""
 stringToFloat = lambda s: \
 	float(''.join(filter(lambda x: x != ',', s.strip()))) if isinstance(s, str) \
 	else s
@@ -38,9 +41,9 @@ stringToFloat = lambda s: \
 		[Dictionary] Geneva holding position
 """
 holdingPosition = lambda date, p: \
-	{ 'portfolio': p['portfolio_code']\
+	{ 'portfolio': p['Account No.']
 	, 'custodian': ''\
-	, 'date': date\
+	, 'date': convertDateString(p['Init Date'])
 	, 'geneva_investment_id': ''\
 	, 'ISIN': p['instrument_code']\
 	, 'bloomberg_figi': ''\
@@ -71,7 +74,15 @@ filenameWithoutPath = lambda filename: \
 
 
 isCashFile = lambda filename: \
-	filenameWithoutPath(filename).split('.')[0].startswith('cash_pos')
+	filenameWithoutPath(filename).split('.')[0].endswith('cash_pos')
+
+
+
+"""
+	[String] date string (yyyymmdd) => [String] date string (yyyy-mm-dd)
+"""
+convertDateString = lambda s : \
+	datetime.strptime(s, '%Y%m%d').strftime('%Y-%m-%d')
 
 
 
@@ -83,15 +94,9 @@ isCashFile = lambda filename: \
 
 	The date in the file name follows "yyyymmdd" convention.
 """
-# dateFromFilename = lambda filename: \
-# 	(lambda s: \
-# 		datetime.strptime(s, '%d%m%Y').strftime('%Y-%m-%d')
-# 	)(filenameWithoutPath(filename).split('.')[0].split('_')[-1])
-
-
 dateFromFilename = compose(
-	  lambda s : datetime.strptime(s, '%Y%m%d').strftime('%Y-%m-%d')
-	, lambda s : s.split('_')[0] if s[0] in '123456789' else s.split()[1] 
+	  convertDateString
+	, lambda s : s.split('_')[0] if s[0] == '2' else s.split()[1] 
 	, lambda fn: fn.split('.')[0]
 	, filenameWithoutPath
 )
@@ -167,5 +172,7 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	# inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_08112019.xlsx')
-	inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
-	print(outputCsv(inputFile, ''))
+	inputFile = join(getCurrentDirectory(), 'samples', 'StockHoldInfo 20191122.xlsx')
+	for p in getRawPositions(inputFile):
+		print(p)
+		break
