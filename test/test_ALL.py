@@ -33,7 +33,7 @@ class TestALL(unittest2.TestCase):
 		date, positions = getPositions(inputFile)
 		positions = list(map(partial(holdingPosition, date), positions))
 		self.assertEqual(26, len(positions))
-		self.verifyPosition(positions[0])
+		self.verifyPosition(positions[22])
 		self.verifyPosition2(positions[23])
 
 
@@ -53,9 +53,9 @@ class TestALL(unittest2.TestCase):
 		self.assertEqual('', position['custodian'])
 		self.assertEqual('2019-11-22', position['date'])
 		self.assertEqual('', position['geneva_investment_id'])
-		self.assertEqual('USY7140WAC20', position['ISIN'])
+		self.assertEqual('US69370RAA59', position['ISIN'])
 		self.assertEqual('', position['bloomberg_figi'])
-		self.assertEqual('INDONESIA ASAHAN ALUMINI', position['name'])
+		self.assertEqual('PERTAMINA PERSERO PT', position['name'])
 		self.assertEqual('USD', position['currency'])
 		self.assertEqual(200000, position['quantity'])
 

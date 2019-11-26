@@ -58,7 +58,7 @@ holdingPosition = lambda date, p: \
 	, 'bloomberg_figi': ''
 	, 'name': p['Stock Name']
 	, 'currency': p['Currency'].split('-')[0]
-	, 'quantity': stringToFloat(p['Available Qty'])
+	, 'quantity': stringToFloat(p['Ledger Qty'])
 	}
 
 
