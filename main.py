@@ -78,14 +78,23 @@ isCashFile = lambda filename: \
 """
 	[String] filename => [String] date (yyyy-mm-dd)
 
-	The file looks like: sec_pos_08112019.xlsx
+	The file looks like: 20191125_560010910_cash_pos.xls, or
+	StockHoldInfo 20191122.xlsx
 
-	The date in the file name follows "ddmmyyyy" convention.
+	The date in the file name follows "yyyymmdd" convention.
 """
-dateFromFilename = lambda filename: \
-	(lambda s: \
-		datetime.strptime(s, '%d%m%Y').strftime('%Y-%m-%d')
-	)(filenameWithoutPath(filename).split('.')[0].split('_')[-1])
+# dateFromFilename = lambda filename: \
+# 	(lambda s: \
+# 		datetime.strptime(s, '%d%m%Y').strftime('%Y-%m-%d')
+# 	)(filenameWithoutPath(filename).split('.')[0].split('_')[-1])
+
+
+dateFromFilename = compose(
+	  lambda s : datetime.strptime(s, '%Y%m%d').strftime('%Y-%m-%d')
+	, lambda s : s.split('_')[0] if s[0] in '123456789' else s.split()[1] 
+	, lambda fn: fn.split('.')[0]
+	, filenameWithoutPath
+)
 
 
 

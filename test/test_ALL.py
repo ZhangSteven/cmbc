@@ -6,7 +6,7 @@ from os.path import join
 from utils.iter import firstOf
 from functools import partial
 from cmbc.main import getCurrentDirectory, getPositions, holdingPosition\
-					, cashPosition
+					, cashPosition, dateFromFilename
 
 
 
@@ -14,6 +14,16 @@ class TestALL(unittest2.TestCase):
 
 	def __init__(self, *args, **kwargs):
 		super(TestALL, self).__init__(*args, **kwargs)
+
+
+
+	def testDateFromFilename(self):
+		inputFile = join( getCurrentDirectory()\
+						, 'samples', '20191125_560010910_cash_pos.xls')
+		self.assertEqual('2019-11-25', dateFromFilename(inputFile))
+		inputFile = join( getCurrentDirectory()\
+						, 'samples', 'StockHoldInfo 20191122.xlsx')
+		self.assertEqual('2019-11-22', dateFromFilename(inputFile))
 
 
 
