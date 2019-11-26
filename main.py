@@ -33,10 +33,6 @@ def addDictValue(key, value, d):
 	If the number string is a String object, then it looks like: '-12,345.67',
 	we convert it to a floating number. Otherwise return it unchanged.
 """
-# stringToFloat = lambda s: \
-# 	float(''.join(filter(lambda x: x != ',', s.strip()))) if isinstance(s, str) \
-# 	else s
-
 stringToFloat = lambda s: \
 	float(s.replace(',', '')) if isinstance(s, str) else s
 
@@ -55,7 +51,7 @@ stringToFloat = lambda s: \
 holdingPosition = lambda date, p: \
 	{ 'portfolio': p['Account No.']
 	, 'custodian': ''
-	, 'date': convertDateString(p['Init Date'])
+	, 'date': date
 	, 'geneva_investment_id': '' if p['Market'].startswith('BOND') \
 								else p['Instrument'] + ' HK'
 	, 'ISIN': p['Instrument'] if p['Market'].startswith('BOND') else ''
@@ -72,11 +68,11 @@ holdingPosition = lambda date, p: \
 		[Dictionary] Geneva cash position
 """
 cashPosition = lambda date, p: \
-	{ 'portfolio': p['portfolio_code']\
-	, 'custodian': ''\
-	, 'date': date\
-	, 'currency': p['account_ccy_code']\
-	, 'balance': stringToFloat(p['ledger_bal_in_acct_ccy'])\
+	{ 'portfolio': p['portfolio_code']
+	, 'custodian': ''
+	, 'date': date
+	, 'currency': p['account_ccy_code']
+	, 'balance': stringToFloat(p['ledger_bal_in_acct_ccy'])
 	}
 
 
@@ -184,14 +180,7 @@ if __name__ == '__main__':
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	# inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_08112019.xlsx')
-<<<<<<< HEAD
 	inputFile = join(getCurrentDirectory(), 'samples', 'StockHoldInfo 20191122.xlsx')
 	for p in getRawPositions(inputFile):
 		print(p)
 		break
-=======
-	# inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
-	inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_19112019.xls')
-	print(outputCsv(inputFile, ''))
->>>>>>> origin/master
