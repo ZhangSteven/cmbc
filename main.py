@@ -28,28 +28,41 @@ def addDictValue(key, value, d):
 
 
 """
-	[]
+	[Object] number string => [Float] number
+	
+	If the number string is a String object, then it looks like: '-12,345.67',
+	we convert it to a floating number. Otherwise return it unchanged.
 """
+# stringToFloat = lambda s: \
+# 	float(''.join(filter(lambda x: x != ',', s.strip()))) if isinstance(s, str) \
+# 	else s
+
 stringToFloat = lambda s: \
-	float(''.join(filter(lambda x: x != ',', s.strip()))) if isinstance(s, str) \
-	else s
+	float(s.replace(',', '')) if isinstance(s, str) else s
+
 
 
 
 """
 	[Dictionary] p (raw holding position) => 
 		[Dictionary] Geneva holding position
+
+	Assumptions: 
+
+	(1) There are only two types of holdings, bond or equity.
+	(2) All equity holdings are HK equity.
 """
 holdingPosition = lambda date, p: \
 	{ 'portfolio': p['Account No.']
-	, 'custodian': ''\
+	, 'custodian': ''
 	, 'date': convertDateString(p['Init Date'])
-	, 'geneva_investment_id': ''\
-	, 'ISIN': p['instrument_code']\
-	, 'bloomberg_figi': ''\
-	, 'name': p['name']\
-	, 'currency': p['instrument_CCY']\
-	, 'quantity': stringToFloat(p['quantity'])\
+	, 'geneva_investment_id': '' if p['Market'].startswith('BOND') \
+								else p['Instrument'] + ' HK'
+	, 'ISIN': p['Instrument'] if p['Market'].startswith('BOND') else ''
+	, 'bloomberg_figi': ''
+	, 'name': p['Stock Name']
+	, 'currency': p['Currency'].split('-')[0]
+	, 'quantity': stringToFloat(p['Available Qty'])
 	}
 
 
@@ -172,7 +185,13 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	# inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_08112019.xlsx')
+<<<<<<< HEAD
 	inputFile = join(getCurrentDirectory(), 'samples', 'StockHoldInfo 20191122.xlsx')
 	for p in getRawPositions(inputFile):
 		print(p)
 		break
+=======
+	# inputFile = join(getCurrentDirectory(), 'samples', 'cash_pos_08112019.xlsx')
+	inputFile = join(getCurrentDirectory(), 'samples', 'sec_pos_19112019.xls')
+	print(outputCsv(inputFile, ''))
+>>>>>>> origin/master
