@@ -15,6 +15,7 @@ from nomura.main import fileToLines, getHeadersnLines, getCashHeaders \
 						, getHoldingHeaders, getOutputFileName
 from os.path import join, dirname, abspath
 from datetime import datetime
+import re
 import logging
 logger = logging.getLogger(__name__)
 
@@ -31,11 +32,18 @@ def addDictValue(key, value, d):
 	[Object] number string => [Float] number
 	
 	If the number string is a String object, then it looks like: '-12,345.67',
+	'(39,525.34)'.
 	we convert it to a floating number. Otherwise return it unchanged.
 """
 stringToFloat = lambda s: \
-	float(s.replace(',', '')) if isinstance(s, str) else s
+	(lambda m: \
+		-1 * sToFloat(m.group(0)[1:-1]) if m != None else \
+		sToFloat(s)
+	)(re.match('\(.*\)', s))	
 
+
+sToFloat = lambda s: \
+	float(s.replace(',', '')) if isinstance(s, str) else s
 
 
 
@@ -72,7 +80,7 @@ cashPosition = lambda date, p: \
 	, 'custodian': ''
 	, 'date': date
 	, 'currency': p['account_ccy_code']
-	, 'balance': stringToFloat(p['ledger_bal_in_acct_ccy'])
+	, 'balance': stringToFloat(p['available_bal_in_acct_ccy'])
 	}
 
 

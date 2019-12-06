@@ -79,4 +79,4 @@ class TestALL(unittest2.TestCase):
 		self.assertEqual('', position['custodian'])
 		self.assertEqual('2019-11-25', position['date'])
 		self.assertEqual('USD', position['currency'])
-		self.assertAlmostEqual(19001.03 , position['balance'])
+		self.assertAlmostEqual(-395254.53, position['balance'])
