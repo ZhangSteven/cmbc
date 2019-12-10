@@ -39,11 +39,12 @@ stringToFloat = lambda s: \
 	(lambda m: \
 		-1 * sToFloat(m.group(0)[1:-1]) if m != None else \
 		sToFloat(s)
-	)(re.match('\(.*\)', s))	
+	)(re.match('\(.*\)', s)) \
+	if isinstance(s, str) else s
 
 
 sToFloat = lambda s: \
-	float(s.replace(',', '')) if isinstance(s, str) else s
+	float(s.replace(',', ''))
 
 
 
@@ -113,7 +114,7 @@ convertDateString = lambda s : \
 """
 dateFromFilename = compose(
 	  convertDateString
-	, lambda s : s.split('_')[0] if s[0] == '2' else s.split()[1] 
+	, lambda s : s.split('_')[0] if s[0] == '2' else s.split()[-1] 
 	, lambda fn: fn.split('.')[0]
 	, filenameWithoutPath
 )
@@ -188,7 +189,11 @@ if __name__ == '__main__':
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	inputFile = join(getCurrentDirectory(), 'samples', 'StockHoldInfo 20191122.xlsx')
-	for p in getRawPositions(inputFile):
-		print(p)
-		break
+	inputFile = join(getCurrentDirectory(), 'samples', 'Security Holding 20191209.xls')
+	
+	# Show the first raw position
+	# for p in getRawPositions(inputFile):
+	# 	print(p)
+	# 	break
+
+	outputCsv(inputFile, '')

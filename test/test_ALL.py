@@ -22,19 +22,19 @@ class TestALL(unittest2.TestCase):
 						, 'samples', '20191125_560010910_cash_pos.xls')
 		self.assertEqual('2019-11-25', dateFromFilename(inputFile))
 		inputFile = join( getCurrentDirectory()\
-						, 'samples', 'StockHoldInfo 20191122.xlsx')
-		self.assertEqual('2019-11-22', dateFromFilename(inputFile))
+						, 'samples', 'Security Holding 20191209.xls')
+		self.assertEqual('2019-12-09', dateFromFilename(inputFile))
 
 
 
 	def testGetPositions(self):
 		inputFile = join( getCurrentDirectory()\
-						, 'samples', 'StockHoldInfo 20191122.xlsx')
+						, 'samples', 'Security Holding 20191209.xls')
 		date, positions = getPositions(inputFile)
 		positions = list(map(partial(holdingPosition, date), positions))
-		self.assertEqual(26, len(positions))
-		self.verifyPosition(positions[22])
-		self.verifyPosition2(positions[23])
+		self.assertEqual(28, len(positions))
+		self.verifyPosition(positions[4])
+		self.verifyPosition2(positions[27])
 
 
 
@@ -51,26 +51,26 @@ class TestALL(unittest2.TestCase):
 	def verifyPosition(self, position):
 		self.assertEqual('560010910', position['portfolio'])
 		self.assertEqual('', position['custodian'])
-		self.assertEqual('2019-11-22', position['date'])
+		self.assertEqual('2019-12-09', position['date'])
 		self.assertEqual('', position['geneva_investment_id'])
-		self.assertEqual('US69370RAA59', position['ISIN'])
+		self.assertEqual('XS1897158892', position['ISIN'])
 		self.assertEqual('', position['bloomberg_figi'])
-		self.assertEqual('PERTAMINA PERSERO PT', position['name'])
+		self.assertEqual('CHINA CITIC BANK INTL', position['name'])
 		self.assertEqual('USD', position['currency'])
-		self.assertEqual(200000, position['quantity'])
+		self.assertEqual(400000, position['quantity'])
 
 
 
 	def verifyPosition2(self, position):
 		self.assertEqual('560010910', position['portfolio'])
 		self.assertEqual('', position['custodian'])
-		self.assertEqual('2019-11-22', position['date'])
-		self.assertEqual('1776 HK', position['geneva_investment_id'])
+		self.assertEqual('2019-12-09', position['date'])
+		self.assertEqual('6886 HK', position['geneva_investment_id'])
 		self.assertEqual('', position['ISIN'])
 		self.assertEqual('', position['bloomberg_figi'])
-		self.assertEqual('GF SECURITIES CO LTD-H', position['name'])
+		self.assertEqual('HUATAI SECURITIES CO LTD-H', position['name'])
 		self.assertEqual('HKD', position['currency'])
-		self.assertEqual(144000, position['quantity'])
+		self.assertEqual(97000, position['quantity'])
 
 
 
