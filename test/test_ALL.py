@@ -38,6 +38,17 @@ class TestALL(unittest2.TestCase):
 
 
 
+	def testGetPositions2(self):
+		inputFile = join( getCurrentDirectory()\
+						, 'samples', 'Security Holding 20200131.xlsx')
+		date, positions = getPositions(inputFile)
+		positions = list(map(partial(holdingPosition, date), positions))
+		self.assertEqual(36, len(positions))
+		self.verifyPosition3(positions[34])
+		self.verifyPosition4(positions[35])
+
+
+
 	def testGetCashPositions(self):
 		inputFile = join( getCurrentDirectory()\
 						, 'samples', '20191125_560010910_cash_pos.xls')
@@ -52,7 +63,7 @@ class TestALL(unittest2.TestCase):
 		self.assertEqual('560010910', position['portfolio'])
 		self.assertEqual('', position['custodian'])
 		self.assertEqual('2019-12-09', position['date'])
-		self.assertEqual('', position['geneva_investment_id'])
+		self.assertEqual('XS1897158892', position['geneva_investment_id'])
 		self.assertEqual('XS1897158892', position['ISIN'])
 		self.assertEqual('', position['bloomberg_figi'])
 		self.assertEqual('CHINA CITIC BANK INTL', position['name'])
@@ -71,6 +82,32 @@ class TestALL(unittest2.TestCase):
 		self.assertEqual('HUATAI SECURITIES CO LTD-H', position['name'])
 		self.assertEqual('HKD', position['currency'])
 		self.assertEqual(97000, position['quantity'])
+
+
+
+	def verifyPosition3(self, position):
+		self.assertEqual('560010910', position['portfolio'])
+		self.assertEqual('', position['custodian'])
+		self.assertEqual('2020-01-31', position['date'])
+		self.assertEqual('600739 C1', position['geneva_investment_id'])
+		self.assertEqual('', position['ISIN'])
+		self.assertEqual('', position['bloomberg_figi'])
+		self.assertEqual('LIAONING CHENG DA CO LTD-A', position['name'])
+		self.assertEqual('CNY', position['currency'])
+		self.assertEqual(64200, position['quantity'])
+
+
+
+	def verifyPosition4(self, position):
+		self.assertEqual('560010910', position['portfolio'])
+		self.assertEqual('', position['custodian'])
+		self.assertEqual('2020-01-31', position['date'])
+		self.assertEqual('000623 C2', position['geneva_investment_id'])
+		self.assertEqual('', position['ISIN'])
+		self.assertEqual('', position['bloomberg_figi'])
+		self.assertEqual('JILIN AODONG PHARMACEUTICA-A', position['name'])
+		self.assertEqual('CNY', position['currency'])
+		self.assertEqual(65000, position['quantity'])
 
 
 

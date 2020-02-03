@@ -47,26 +47,27 @@ sToFloat = lambda s: \
 	float(s.replace(',', ''))
 
 
+changeMarketCode = lambda x: \
+	'' if x == 'BOND' else \
+	' C2' if x == 'SZMK' else \
+	' C1' if x == 'MAMK' else ' ' + x
+
 
 """
 	[Dictionary] p (raw holding position) => 
 		[Dictionary] Geneva holding position
 
-	Assumptions: 
-
-	(1) There are only two types of holdings, bond or equity.
-	(2) All equity holdings are HK equity.
+	Assumptions: There are only two types of holdings, bond or equity.
 """
 holdingPosition = lambda date, p: \
 	{ 'portfolio': p['Account No.']
 	, 'custodian': ''
 	, 'date': date
-	, 'geneva_investment_id': '' if p['Market'].startswith('BOND') \
-								else p['Instrument'] + ' HK'
+	, 'geneva_investment_id': p['Instrument'] + changeMarketCode(p['Market'])
 	, 'ISIN': p['Instrument'] if p['Market'].startswith('BOND') else ''
 	, 'bloomberg_figi': ''
 	, 'name': p['Stock Name']
-	, 'currency': p['Currency'].split('-')[0]
+	, 'currency': 'CNY' if p['Currency'] == 'CNH' else p['Currency']
 	, 'quantity': stringToFloat(p['Ledger Qty'])
 	}
 
@@ -189,7 +190,8 @@ if __name__ == '__main__':
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	inputFile = join(getCurrentDirectory(), 'samples', 'Security Holding 20191209.xls')
+	# inputFile = join(getCurrentDirectory(), 'samples', 'Security Holding 20191209.xls')
+	inputFile = join(getCurrentDirectory(), 'samples', 'Security Holding 20200131.xlsx')
 	
 	# Show the first raw position
 	# for p in getRawPositions(inputFile):
